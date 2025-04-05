@@ -53,6 +53,7 @@ architecture Roxen of tt_um_julke_gussinatorn is
             "00000000"
         );
 
+    signal ASCELL_Mrse : std_logic_vector(1 downto 0) := "00";
     signal CELL_Mrse : std_logic_vector(1 downto 0) := "00";
     signal ui_in_old : std_logic_vector(3 downto 0) := "0000";
     signal ui_in_sync : std_logic_vector(3 downto 0) := "0000";
@@ -65,8 +66,6 @@ architecture Roxen of tt_um_julke_gussinatorn is
     signal STATE_Mrse : std_logic_vector(1 downto 0) := "00";
 
     begin
-        --uo_out <= std_logic_vector(unsigned(ui_in) + unsigned(uio_in));
-        --uo_out <= not (ui_in and uio_in);
         uio_out <= "00000000";
         uio_oe <= "00000000";
 
@@ -75,9 +74,9 @@ architecture Roxen of tt_um_julke_gussinatorn is
         process(ui_in_sync, FLUSH_SR_Mrse) begin
             --Tilldela morsekod-värde;
             if ((ui_in_sync(0) = '1') or (ui_in_sync(1) = '1')) and (not (FLUSH_SR_Mrse = '1')) then
-                CELL_Mrse <= ui_in_sync(1 downto 0);
+                ASCELL_Mrse <= ui_in_sync(1 downto 0);
             else
-                CELL_Mrse <= "00";
+                ASCELL_Mrse <= "00";
             end if;
         end process;
         
@@ -141,10 +140,12 @@ architecture Roxen of tt_um_julke_gussinatorn is
 
 
                     elsif (FLUSH_SR_Mrse = '1')  or (ui_in_sync(0) = '1') or (ui_in_sync(1) = '1') then
-                            SR_Mrse <= SR_Mrse(5 downto 0) & CELL_Mrse;
+                            SR_Mrse <= SR_Mrse(5 downto 0) & ASCELL_Mrse;
                             I_SR_Mrse <= I_SR_Mrse + 1;
                     end if;     
                 end if;
+
+
 
                 if ui_in_sync(3) = '1' then
                     I_ROM_Mrse <= 0;
