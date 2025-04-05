@@ -85,46 +85,43 @@ architecture Roxen of tt_um_julke_gussinatorn is
         process(clk, rst_n) begin
             --Läs och skifta till rom;
             if (rst_n = '1') then
-                    ROM_Mrse <= (
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000",
-                                    "00000000"
-                                );
-                        ui_in_sync <= "0000";
-                        I_ROM_Mrse <= 0;
-                        I_SR_Mrse <= 0;
-            end if;
-            
-            if rising_edge(clk) then
+                ROM_Mrse <= (
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000",
+                                "00000000"
+                            );
+                I_ROM_Mrse <= 0;
+                I_SR_Mrse <= 0;
+            elsif rising_edge(clk) then
 
                 ui_in_old <= ui_in(3 downto 0);
 
@@ -148,12 +145,7 @@ architecture Roxen of tt_um_julke_gussinatorn is
                             I_SR_Mrse <= I_SR_Mrse + 1;
                     end if;     
                 end if;
-            end if;  
 
-        end process;
-
-        process(clk, rst_n) begin
-            if rising_edge(clk) then
                 if ui_in_sync(3) = '1' then
                     I_ROM_Mrse <= 0;
                     I_SR_Mrse <= 0;
@@ -219,6 +211,7 @@ architecture Roxen of tt_um_julke_gussinatorn is
                             null;
                     end case;
                 end if;
-            end if;
+            end if;  
+
         end process;
 end Roxen;
