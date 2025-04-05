@@ -34,7 +34,7 @@ architecture Roxen of tt_um_Julke_Gussinatorn is
     signal ui_in_sync : std_logic_vector(3 downto 0) := "0000";
     signal SR_Mrse : std_logic_vector(7 downto 0) := "00000000";
     signal I_SR_Mrse : integer range 0 to 3 := 0;
-    signal FLUSH_SR_Mrse : std_logic := "0";
+    signal FLUSH_SR_Mrse : std_logic := '0';
     signal I_ROM_Mrse : integer range 0 to 63 := 0;
 
     begin
@@ -50,21 +50,21 @@ architecture Roxen of tt_um_Julke_Gussinatorn is
                 ui_in_old <= ui_in(3 downto 0);
                 ui_in_sync <= ui_in(3 downto 0) and not ui_in_old;
 
-                if (ui_in_sync(2) = "1") then
-                    FLUSH_SR_Mrse <= "1";
+                if (ui_in_sync(2) = '1') then
+                    FLUSH_SR_Mrse <= '1';
                 end if;
 
-                if ((ui_in_sync(0) = "1") or (ui_in_sync(1) = "1")) and (not (FLUSH_SR_Mrse = "1")) then
+                if ((ui_in_sync(0) = '1') or (ui_in_sync(1) = '1')) and (not (FLUSH_SR_Mrse = '1')) then
                     CELL_Mrse <= ui_in_sync(1 downto 0);
-                elsif (FLUSH_SR_Mrse = "1") then
+                elsif (FLUSH_SR_Mrse = '1') then
                     CELL_Mrse <= "00";
                 end if;
 
                 if (I_SR_Mrse = 3) then
                     I_SR_Mrse <= 0;
-                    FLUSH_SR_Mrse <= "0";
+                    FLUSH_SR_Mrse <= '1';
 
-                elsif (FLUSH_SR_Mrse = "1")  or (ui_in_sync(0) = "1") or (ui_in_sync(1) = "1") then
+                elsif (FLUSH_SR_Mrse = '1')  or (ui_in_sync(0) = '1') or (ui_in_sync(1) = '1') then
                         SR_Mrse <= SR_Mrse(SR_Mrse'high - 2 downto SR_Mrse'low) & CELL_Mrse;
                         I_SR_Mrse <= I_SR_Mrse + 1;
                 end if;     
