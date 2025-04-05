@@ -52,7 +52,7 @@ async def test_project(dut):
     for l in range(3):
         for i in range(3):
             await ClockCycles(dut.clk, random.randint(5,43))
-            dut.ui_in.value = 1
+            dut.ui_in.value = random.randint(1,2)
             await ClockCycles(dut.clk, 100)
             dut.ui_in.value = 0
             await ClockCycles(dut.clk, 100)
@@ -70,7 +70,7 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 100000)
 
     await ClockCycles(dut.clk, 100)
-    dut.ui_in.value = 8
+    dut.ui_in.value = 16
 
     await ClockCycles(dut.clk, 100000)
 

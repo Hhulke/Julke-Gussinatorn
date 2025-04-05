@@ -55,21 +55,21 @@ architecture Roxen of tt_um_julke_gussinatorn is
 
     signal ASCELL_Mrse : std_logic_vector(1 downto 0) := "00";
     signal CELL_Mrse : std_logic_vector(1 downto 0) := "00";
-    signal ui_in_old : std_logic_vector(3 downto 0) := "0000";
-    signal ui_in_sync : std_logic_vector(3 downto 0) := "0000";
+    signal ui_in_old : std_logic_vector(4 downto 0) := "00000";
+    signal ui_in_sync : std_logic_vector(4 downto 0) := "00000";
     signal SR_Mrse : std_logic_vector(7 downto 0) := "00000000";
     signal I_SR_Mrse : integer range 0 to 3 := 0;
     signal FLUSH_SR_Mrse : std_logic := '0';
     signal I_ROM_Mrse : integer range 0 to 31 := 0;
     
     signal TIME_Mrse : integer range 0 to 16383 := 0;
-    signal STATE_Mrse : std_logic_vector(1 downto 0) := "00";
+    signal STATE_Mrse : std_logic_vector(2 downto 0) := "000";
 
     begin
         uio_out <= "00000000";
         uio_oe <= "00000000";
 
-        ui_in_sync <= ui_in(3 downto 0) and not ui_in_old;
+        ui_in_sync <= ui_in(4 downto 0) and not ui_in_old;
 
         process(ui_in_sync, FLUSH_SR_Mrse) begin
             --Tilldela morsekod-värde;
@@ -122,9 +122,9 @@ architecture Roxen of tt_um_julke_gussinatorn is
                 I_SR_Mrse <= 0;
             elsif rising_edge(clk) then
 
-                ui_in_old <= ui_in(3 downto 0);
+                ui_in_old <= ui_in(4 downto 0);
 
-                if STATE_Mrse = "00" then
+                if STATE_Mrse = "000" then
                     if (ui_in_sync(2) = '1') then
                         FLUSH_SR_Mrse <= '1';
                     end if;
@@ -150,16 +150,20 @@ architecture Roxen of tt_um_julke_gussinatorn is
                 if ui_in_sync(3) = '1' then
                     I_ROM_Mrse <= 0;
                     I_SR_Mrse <= 0;
-                    STATE_Mrse <= "01";
+                    STATE_Mrse <= "001";
+                elsif ui_in_sync(4) = '1' then
+                    I_ROM_Mrse <= 31;
+                    I_SR_Mrse <= 0;
+                    STATE_Mrse <= "101";
                 end if;
 
-                if STATE_Mrse = "01" then
+                if STATE_Mrse = "001" then
                     if I_ROM_Mrse = 31 then
                         I_ROM_Mrse <= 0;
                         I_SR_Mrse <= 0;
-                        STATE_Mrse <= "00";
+                        STATE_Mrse <= "000";
                     else
-                        STATE_Mrse <= "11";
+                        STATE_Mrse <= "011";
                     end if;
 
                     if I_SR_Mrse = 3 then
@@ -182,7 +186,7 @@ architecture Roxen of tt_um_julke_gussinatorn is
                             null;
                     end case;
 
-                elsif STATE_Mrse = "10" then
+                elsif STATE_Mrse = "010" then
                     if TIME_Mrse > 1000 then
                         TIME_Mrse <= TIME_Mrse - 1;
                         uo_out(0) <= '1';
@@ -191,28 +195,27 @@ architecture Roxen of tt_um_julke_gussinatorn is
                         TIME_Mrse <= TIME_Mrse - 1;
                     else 
                         I_SR_Mrse <= I_SR_Mrse + 1;
-                        STATE_Mrse <= "01";
+                        STATE_Mrse <= "001";
                     end if;
-                elsif STATE_Mrse = "11" then
+                elsif STATE_Mrse = "011" then
                     case CELL_Mrse is
                         when "00" =>
                             SR_Mrse <= ROM_Mrse(I_ROM_Mrse);
-                            STATE_Mrse <= "01";
+                            STATE_Mrse <= "001";
                             if SR_Mrse = "00000000" then
                                 I_SR_Mrse <= I_SR_Mrse + 1;
                             end if; 
                             
                         when "01" =>
                             TIME_Mrse <= 3000;
-                            STATE_Mrse <= "10";
+                            STATE_Mrse <= "010";
                         when "10" =>
                             TIME_Mrse <= 6000;
-                            STATE_Mrse <= "10";
+                            STATE_Mrse <= "010";
                         when others =>
                             null;
                     end case;
                 end if;
             end if;  
-
         end process;
 end Roxen;
