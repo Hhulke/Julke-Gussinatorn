@@ -2,7 +2,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity tt_um_Julke_Gussinatorn is
+entity tt_um_julke_gussinatorn is
     port (
         ui_in   : in  std_logic_vector(7 downto 0);
         uo_out  : out std_logic_vector(7 downto 0);
@@ -13,9 +13,9 @@ entity tt_um_Julke_Gussinatorn is
         clk     : in  std_logic;
         rst_n   : in  std_logic
     );
-end tt_um_Julke_Gussinatorn;
+end tt_um_julke_gussinatorn;
 
-architecture Roxen of tt_um_Julke_Gussinatorn is
+architecture Roxen of tt_um_julke_gussinatorn is
 
     type rom_type is array(7 downto 0) of std_logic_vector(7 downto 0);
     signal ROM_Mrse : rom_type := (
@@ -35,7 +35,7 @@ architecture Roxen of tt_um_Julke_Gussinatorn is
     signal SR_Mrse : std_logic_vector(7 downto 0) := "00000000";
     signal I_SR_Mrse : integer range 0 to 3 := 0;
     signal FLUSH_SR_Mrse : std_logic := '0';
-    signal I_ROM_Mrse : integer range 0 to 63 := 0;
+    signal I_ROM_Mrse : integer range 0 to 7 := 0;
 
     begin
         --uo_out <= std_logic_vector(unsigned(ui_in) + unsigned(uio_in));
@@ -43,29 +43,39 @@ architecture Roxen of tt_um_Julke_Gussinatorn is
         uio_out <= "00000000";
         uio_oe <= "00000000";
 
+        ui_in_sync <= ui_in(3 downto 0) and not ui_in_old;
 
-        process(ui_in(2 downto 0), clk) begin
+        process(ui_in_sync, FLUSH_SR_Mrse) begin
 
+            if ((ui_in_sync(0) = '1') or (ui_in_sync(1) = '1')) and (not (FLUSH_SR_Mrse = '1')) then
+                CELL_Mrse <= ui_in_sync(1 downto 0);
+            elsif (FLUSH_SR_Mrse = '1') then
+                CELL_Mrse <= "00";
+            end if;
+        end process;
+        
+
+        process(clk) begin
+        
             if rising_edge(clk) then
                 ui_in_old <= ui_in(3 downto 0);
-                ui_in_sync <= ui_in(3 downto 0) and not ui_in_old;
 
                 if (ui_in_sync(2) = '1') then
                     FLUSH_SR_Mrse <= '1';
                 end if;
 
-                if ((ui_in_sync(0) = '1') or (ui_in_sync(1) = '1')) and (not (FLUSH_SR_Mrse = '1')) then
-                    CELL_Mrse <= ui_in_sync(1 downto 0);
-                elsif (FLUSH_SR_Mrse = '1') then
-                    CELL_Mrse <= "00";
-                end if;
-
-                if (I_SR_Mrse = 3) then
+                if (I_SR_Mrse = 4) then
                     I_SR_Mrse <= 0;
-                    FLUSH_SR_Mrse <= '1';
+                    FLUSH_SR_Mrse <= '0';
+
+                    ROM_Mrse(I_ROM_Mrse) <= SR_Mrse;
+                    I_ROM_Mrse <= I_ROM_Mrse + 1;
+
+                    SR_Mrse <= "00000000";
+
 
                 elsif (FLUSH_SR_Mrse = '1')  or (ui_in_sync(0) = '1') or (ui_in_sync(1) = '1') then
-                        SR_Mrse <= SR_Mrse(SR_Mrse'high - 2 downto SR_Mrse'low) & CELL_Mrse;
+                        SR_Mrse <= SR_Mrse(5 downto 0) & CELL_Mrse;
                         I_SR_Mrse <= I_SR_Mrse + 1;
                 end if;     
             end if;       

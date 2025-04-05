@@ -4,6 +4,7 @@
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import ClockCycles
+import random
 
 
 @cocotb.test()
@@ -28,17 +29,15 @@ async def test_project(dut):
     # Set the input values you want to test
 
     # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
-    dut.ui_in.value = 1
+    for l in range(5):
+        for i in range(0,3):
+            await ClockCycles(dut.clk, random.randint(5,43))
+            dut.ui_in.value = random.randint(1,2)
 
-    await ClockCycles(dut.clk, 3)
-    dut.ui_in.value = 2
-
-    await ClockCycles(dut.clk, 37)
-    dut.ui_in.value = 2
+        await ClockCycles(dut.clk, 100)
+        dut.ui_in.value = 4
 
     await ClockCycles(dut.clk, 100)
-    dut.ui_in.value = 4
 
     # The following assersion is just an example of how to check the output values.
     # Change it to match the actual expected output of your module:
