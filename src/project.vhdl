@@ -46,7 +46,7 @@ architecture Roxen of tt_um_julke_gussinatorn is
         ui_in_sync <= ui_in(3 downto 0) and not ui_in_old;
 
         process(ui_in_sync, FLUSH_SR_Mrse) begin
-
+            #Tilldela morsekod-värde
             if ((ui_in_sync(0) = '1') or (ui_in_sync(1) = '1')) and (not (FLUSH_SR_Mrse = '1')) then
                 CELL_Mrse <= ui_in_sync(1 downto 0);
             elsif (FLUSH_SR_Mrse = '1') then
@@ -55,9 +55,26 @@ architecture Roxen of tt_um_julke_gussinatorn is
         end process;
         
 
-        process(clk) begin
-        
+        process(clk, rst_n) begin
+            #Läs och skifta till rom
             if rising_edge(clk) then
+                if (rst_n = '1') then
+                    ROM_Mrse <= (
+                        "00000000",
+                        "00000000",
+                        "00000000",
+                        "00000000",
+                        "00000000",
+                        "00000000",
+                        "00000000",
+                        "00000000"
+                    );
+                    SR_Mrse <= "00000000";
+                    I_SR_Mrse <= 0;
+                    FLUSH_SR_Mrse <= '0';
+                    I_ROM_Mrse <= 0;
+                end if;
+
                 ui_in_old <= ui_in(3 downto 0);
 
                 if (ui_in_sync(2) = '1') then
@@ -78,6 +95,7 @@ architecture Roxen of tt_um_julke_gussinatorn is
                         SR_Mrse <= SR_Mrse(5 downto 0) & CELL_Mrse;
                         I_SR_Mrse <= I_SR_Mrse + 1;
                 end if;     
-            end if;       
+            end if;  
+
         end process;
 end Roxen;
