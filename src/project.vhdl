@@ -84,8 +84,7 @@ architecture Roxen of tt_um_julke_gussinatorn is
 
         process(clk, rst_n) begin
             --Läs och skifta till rom;
-            if rising_edge(clk) then
-                if (rst_n = '1') then
+            if (rst_n = '1') then
                     ROM_Mrse <= (
                                     "00000000",
                                     "00000000",
@@ -123,7 +122,9 @@ architecture Roxen of tt_um_julke_gussinatorn is
                         ui_in_sync <= "0000";
                         I_ROM_Mrse <= 0;
                         I_SR_Mrse <= 0;
-                end if;
+            end if;
+            
+            if rising_edge(clk) then
 
                 ui_in_old <= ui_in(3 downto 0);
 
