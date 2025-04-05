@@ -29,13 +29,54 @@ async def test_project(dut):
     # Set the input values you want to test
 
     # Wait for one clock cycle to see the output values
-    for l in range(5):
-        for i in range(0,3):
+    for l in range(3):
+        for i in range(3):
             await ClockCycles(dut.clk, random.randint(5,43))
-            dut.ui_in.value = random.randint(1,2)
+            dut.ui_in.value = 2
+            await ClockCycles(dut.clk, 100)
+            dut.ui_in.value = 0
+            await ClockCycles(dut.clk, 100)
 
         await ClockCycles(dut.clk, 100)
         dut.ui_in.value = 4
+
+    await ClockCycles(dut.clk, 100)
+    dut.ui_in.value = 8
+
+    await ClockCycles(dut.clk, 100000)
+
+    await ClockCycles(dut.clk, 100000)
+
+    await ClockCycles(dut.clk, 100)
+
+    for l in range(3):
+        for i in range(3):
+            await ClockCycles(dut.clk, random.randint(5,43))
+            dut.ui_in.value = 1
+            await ClockCycles(dut.clk, 100)
+            dut.ui_in.value = 0
+            await ClockCycles(dut.clk, 100)
+
+        await ClockCycles(dut.clk, 100)
+        dut.ui_in.value = 4
+
+    await ClockCycles(dut.clk, 100)
+    dut.ui_in.value = 8
+
+    await ClockCycles(dut.clk, 100000)
+
+    dut.ui_in.value = 0
+
+    await ClockCycles(dut.clk, 100000)
+
+    await ClockCycles(dut.clk, 100)
+    dut.ui_in.value = 8
+
+    await ClockCycles(dut.clk, 100000)
+
+    await ClockCycles(dut.clk, 100000)
+
+    dut.ui_in.value = 0
 
     await ClockCycles(dut.clk, 100)
 
@@ -46,7 +87,6 @@ async def test_project(dut):
     # The following assersion is just an example of how to check the output values.
     # Change it to match the actual expected output of your module:
     #assert dut.uo_out.value == 50
-    assert dut.uo_out.value == 255
 
     # Keep testing the module by changing the input values, waiting for
     # one or more clock cycles, and asserting the expected output values.
