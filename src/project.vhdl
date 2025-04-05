@@ -54,7 +54,7 @@ architecture Roxen of tt_um_Julke_Gussinatorn is
                     FLUSH_SR_Mrse <= "1";
                 end if;
 
-                if (ui_in_sync(0) = "1") or (ui_in_sync(1) = "1") and not (FLUSH_SR_Mrse = "1") then
+                if ((ui_in_sync(0) = "1") or (ui_in_sync(1) = "1")) and (not (FLUSH_SR_Mrse = "1")) then
                     CELL_Mrse <= ui_in_sync(1 downto 0);
                 elsif (FLUSH_SR_Mrse = "1") then
                     CELL_Mrse <= "00";
